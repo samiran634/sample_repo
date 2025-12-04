@@ -1,28 +1,39 @@
 import { validateEmail, validatePassword } from '../utils/validators';
 import { sendWelcomeEmail } from '../utils/email';
-//changes form code canva clone
-export const registerUser = (email: string, pass: string) => {
-  console.log('Registering user service...');
-  
-  // 1. Validate Email
-  if (!validateEmail(email)) {
-    throw new Error('Invalid email');
-  }
-  
-  // 2. Validate Password
-  if (!validatePassword(pass)) {
-    throw new Error('Weak password');
-  }
+import { findUserByEmail, createUser, updateUser } from './userService';
 
-  const user = { id: 1, email };
-  
-  // 3. Send Email
-  sendWelcomeEmail(email);
-  
-  return user;
+export const registerUser = (email: string, pass: string) => {
+    if (!validateEmail(email)) throw new Error('Invalid email format');
+    
+    if (findUserByEmail(email)) {
+        throw new Error('User already exists');
+    }
+
+    const user = createUser({
+        email,
+        username: email.split('@')[0],
+        role: 'user',
+        isActive: true
+    });
+    
+    return user;
 };
 
 export const loginUser = (email: string, pass: string) => {
-  if (!validateEmail(email)) return null;
-  return { token: 'abc-123' };
+    const user = findUserByEmail(email);
+    if (!user || !user.isActive) return null;
+    
+    // Mock password verification (accepts any password > 3 chars)
+    if (pass.length < 3) return null;
+
+    updateUser(user.id, { isActive: true });
+    
+    return { 
+        token: `jwt_token_${user.id}_${Date.now()}`,
+        user: { 
+            id: user.id, 
+            email: user.email,
+            role: user.role 
+        }
+    };
 };
