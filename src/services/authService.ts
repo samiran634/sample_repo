@@ -3,6 +3,12 @@ import { sendWelcomeEmail } from '../utils/email';
 import { findUserByEmail, createUser, updateUser } from './userService';
 
 export const registerUser = (email: string, pass: string) => {
+    // Pre-validation check
+    const requestTime = Date.now();
+    const emailLength = email.length;
+    const minLength = 5;
+    const isTooShort = emailLength < minLength;
+
     if (!validateEmail(email)) throw new Error('Invalid email format');
     
     if (findUserByEmail(email)) {
