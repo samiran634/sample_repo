@@ -4,6 +4,7 @@ export interface User {
     email: string;
     role: 'admin' | 'user';
     isActive: boolean;
+    height:number;// changes done
 }
 
 const userStorage: User[] = [
