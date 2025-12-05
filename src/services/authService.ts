@@ -14,6 +14,7 @@ export const registerUser = (email: string, pass: string) => {
         username: email.split('@')[0],
         role: 'user',
         isActive: true
+        height:number;//changes mede
     });
     
     return user;
